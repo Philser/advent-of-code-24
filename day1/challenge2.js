@@ -1,7 +1,7 @@
 import { retrieveLocationIDLists } from './util.js';
 
 const { leftList, rightList } = retrieveLocationIDLists(
-  import.meta.dirname + '/input_challenge1.txt'
+  import.meta.dirname + '/input_day1.txt'
 );
 
 const occurrences = {};
