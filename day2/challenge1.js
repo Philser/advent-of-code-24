@@ -20,12 +20,13 @@ export function assessReports(reports) {
     let isSafeReport = true;
     for (let i = 1; i < report.length; i++) {
       let distance = report[i] - report[i - 1];
-      if (i == 1) {
+      if (i === 1) {
         direction = distance < 0 ? DECREASING : INCREASING;
       }
 
       if (Math.abs(distance) > MAX_ALLOWED_INCREASE) {
         isSafeReport = false;
+        break;
       }
 
       if (
@@ -34,6 +35,7 @@ export function assessReports(reports) {
         (distance > 0 && direction === DECREASING)
       ) {
         isSafeReport = false;
+        break;
       }
     }
 

@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { describe, it } from 'mocha';
 import { assessReports } from './challenge1.js';
 
-describe.only('Day 2 Challenge 1', () => {
+describe('Day 2 Challenge 1', () => {
   it('recognizes a safe increasing report', () => {
     const assessment = assessReports([[4, 5, 6, 7]]);
     expect(assessment).to.deep.eq({ safeReports: 1 });
