@@ -1,11 +1,13 @@
-// iterate through all once
-// one state holder for each:
-//  - horizontal forwards
-//  - horizontal backwards
-//  - vertical
-//  - diagonal
+import fs from 'fs';
+
+const f = fs.readFileSync(import.meta.dirname + '/input_day4.txt');
+console.log(findEveryXmas(f.toString()));
+
 export function findEveryXmas(input) {
-  const lines = input.split('\n');
+  let lines = input.split('\n');
+  if (lines[lines.length - 1] === '') {
+    lines = lines.slice(0, -1);
+  }
 
   let counter = 0;
 
@@ -20,23 +22,18 @@ export function findEveryXmas(input) {
     for (let col = 0; col < line.length; col++) {
       let diagonalTemp = '';
       const char = line[col];
-      if (isLegible(forwardTemp, forwardTarget, char)) {
-        forwardTemp += char;
-        if (forwardTemp === forwardTarget) {
-          forwardTemp = '';
-          counter += 1;
-        }
-      }
+      let scanResult;
+      scanResult = handleChar(forwardTemp, forwardTarget, char);
+      counter += scanResult.inc;
+      forwardTemp = scanResult.newBuffer;
 
-      if (isLegible(backwardsTemp, backwardsTarget, char)) {
-        backwardsTemp += char;
-        if (backwardsTemp === backwardsTarget) {
-          backwardsTemp = '';
-          counter += 1;
-        }
-      }
+      scanResult = handleChar(backwardsTemp, backwardsTarget, char);
+      counter += scanResult.inc;
+      backwardsTemp = scanResult.newBuffer;
 
+      // diagonal right-bound XMAS
       let tempRowCol = { row, col };
+      diagonalTemp = '';
       while (
         isLegible(
           diagonalTemp,
@@ -46,7 +43,6 @@ export function findEveryXmas(input) {
       ) {
         diagonalTemp += lines[tempRowCol.row][tempRowCol.col];
         if (diagonalTemp === forwardTarget) {
-          diagonalTemp = '';
           counter += 1;
           break;
         }
@@ -55,12 +51,13 @@ export function findEveryXmas(input) {
           tempRowCol.col >= lines[0].length ||
           tempRowCol.row >= lines.length
         ) {
-          diagonalTemp = '';
           break;
         }
       }
 
+      // diagonal right-bound SAMX
       tempRowCol = { row, col };
+      diagonalTemp = '';
       while (
         isLegible(
           diagonalTemp,
@@ -70,7 +67,6 @@ export function findEveryXmas(input) {
       ) {
         diagonalTemp += lines[tempRowCol.row][tempRowCol.col];
         if (diagonalTemp === backwardsTarget) {
-          diagonalTemp = '';
           counter += 1;
           break;
         }
@@ -79,12 +75,13 @@ export function findEveryXmas(input) {
           tempRowCol.col >= lines[0].length ||
           tempRowCol.row >= lines.length
         ) {
-          diagonalTemp = '';
           break;
         }
       }
 
+      // diagonal left-bound XMAS
       tempRowCol = { row, col };
+      diagonalTemp = '';
       while (
         isLegible(
           diagonalTemp,
@@ -105,7 +102,9 @@ export function findEveryXmas(input) {
         }
       }
 
+      // diagonal left-bound SAMX
       tempRowCol = { row, col };
+      diagonalTemp = '';
       while (
         isLegible(
           diagonalTemp,
@@ -115,13 +114,11 @@ export function findEveryXmas(input) {
       ) {
         diagonalTemp += lines[tempRowCol.row][tempRowCol.col];
         if (diagonalTemp === backwardsTarget) {
-          diagonalTemp = '';
           counter += 1;
           break;
         }
         tempRowCol = { row: tempRowCol.row + 1, col: tempRowCol.col - 1 };
         if (tempRowCol.col < 0 || tempRowCol.row >= lines.length) {
-          diagonalTemp = '';
           break;
         }
       }
@@ -135,21 +132,14 @@ export function findEveryXmas(input) {
 
     for (let row = 0; row < lines.length; row++) {
       const char = lines[row][col];
-      if (isLegible(forwardTemp, forwardTarget, char)) {
-        forwardTemp += char;
-        if (forwardTemp === forwardTarget) {
-          forwardTemp = '';
-          counter += 1;
-        }
-      }
+      let scanResult;
+      scanResult = handleChar(forwardTemp, forwardTarget, char);
+      counter += scanResult.inc;
+      forwardTemp = scanResult.newBuffer;
 
-      if (isLegible(backwardsTemp, backwardsTarget, char)) {
-        backwardsTemp += char;
-        if (backwardsTemp === backwardsTarget) {
-          backwardsTemp = '';
-          counter += 1;
-        }
-      }
+      scanResult = handleChar(backwardsTemp, backwardsTarget, char);
+      counter += scanResult.inc;
+      backwardsTemp = scanResult.newBuffer;
     }
   }
 
@@ -160,4 +150,21 @@ function isLegible(forwardTemp, targetWord, char) {
   if (targetWord.startsWith(forwardTemp + char)) {
     return true;
   }
+}
+
+function handleChar(buffer, targetWord, char) {
+  let newBuffer = char;
+  let inc = 0;
+  if (isLegible(buffer, targetWord, char)) {
+    newBuffer = buffer + char;
+    if (targetWord === newBuffer) {
+      inc = 1;
+      newBuffer = '';
+    }
+  }
+
+  return {
+    newBuffer,
+    inc,
+  };
 }

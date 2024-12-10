@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { findEveryXmas } from './challenge1.js';
 
-describe.only('Day 4 Challenge 1', () => {
+describe('Day 4 Challenge 1', () => {
   it('finds forward XMAS words', () => {
     const input = 'XMASMMS\nSSXMASM\nMASMASM';
     expect(findEveryXmas(input)).to.eq(2);
@@ -52,15 +52,23 @@ describe.only('Day 4 Challenge 1', () => {
     expect(findEveryXmas(input)).to.eq(2);
   });
 
-  it.only('test input 1', () => {
+  it('finds word after partial word start', () => {
+    const input = 'XXMASAA';
+    expect(findEveryXmas(input)).to.eq(1);
+  });
+
+  it('test input 1', () => {
     const input =
-      'MMMSXXMASM\n' + 'MSAMXMSMSA\n' + 'AMXSXMAAMM\n' + 'MSAMASMSMX';
-    // 'XMASAMXAMM\n' +
-    // 'XXAMMXXAMA\n' +
-    // 'SMSMSASXSS\n' +
-    // 'SAXAMASAAA\n' +
-    // 'MAMMMXMMMM\n' +
-    // 'MXMXAXMASX';
+      'MMMSXXMASM\n' +
+      'MSAMXMSMSA\n' +
+      'AMXSXMAAMM\n' +
+      'MSAMASMSMX\n' +
+      'XMASAMXAMM\n' +
+      'XXAMMXXAMA\n' +
+      'SMSMSASXSS\n' +
+      'SAXAMASAAA\n' +
+      'MAMMMXMMMM\n' +
+      'MXMXAXMASX';
     expect(findEveryXmas(input)).to.eq(18);
   });
 });
