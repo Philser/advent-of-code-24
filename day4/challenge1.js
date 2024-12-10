@@ -1,7 +1,7 @@
 import fs from 'fs';
 
-const f = fs.readFileSync(import.meta.dirname + '/input_day4.txt');
-console.log(findEveryXmas(f.toString()));
+// const f = fs.readFileSync(import.meta.dirname + '/input_day4.txt');
+// console.log(findEveryXmas(f.toString()));
 
 export function findEveryXmas(input) {
   let lines = input.split('\n');
