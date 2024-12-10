@@ -1,17 +1,18 @@
-// import fs from 'fs';
-// const f = fs.readFileSync(import.meta.dirname + '/input_day5.txt').toString();
-// const parts = f.split('\n\n');
-// getCorrectUpdateMiddlePageSum(
-//   parts[0].split('\n'),
-//   parts[1].split('\n').slice(0, -1)
-// );
+import fs from 'fs';
+const f = fs.readFileSync(import.meta.dirname + '/input_day5.txt').toString();
+const parts = f.split('\n\n');
+console.log(
+  getIncorrectUpdateMiddlePageSum(
+    parts[0].split('\n'),
+    parts[1].split('\n').slice(0, -1)
+  )
+);
 
-export function getCorrectUpdateMiddlePageSum(rulesList, updatesList) {
+export function getIncorrectUpdateMiddlePageSum(rulesList, updatesList) {
   const rules = extractRules(rulesList);
 
   let mediumPageSum = 0;
-  for (const update of updatesList) {
-    let isValidUpdate = true;
+  updateLoop: for (const update of updatesList) {
     const sequence = update.split(',');
     for (const [index, number] of sequence.entries()) {
       for (let i = index + 1; i < sequence.length; i++) {
@@ -19,18 +20,22 @@ export function getCorrectUpdateMiddlePageSum(rulesList, updatesList) {
           rules[number]?.after?.has(sequence[i]) ||
           rules[sequence[i]]?.before?.has(number)
         ) {
-          isValidUpdate = false;
+          sequence.sort((a, b) => {
+            if (rules[a]?.after?.has(b) || rules[b]?.before?.has(a)) {
+              return 1;
+            }
+
+            return -1;
+          });
+          mediumPageSum += parseInt(
+            sequence[Math.ceil(sequence.length / 2) - 1]
+          );
+          continue updateLoop;
         }
       }
     }
-
-    // console.log(`${sequence} is ${isValidUpdate ? 'valid' : 'invalid'} update`);
-    if (isValidUpdate) {
-      mediumPageSum += parseInt(sequence[Math.ceil(sequence.length / 2) - 1]);
-    }
   }
-
-  console.log(mediumPageSum);
+  return mediumPageSum;
 }
 
 function extractRules(rulesList) {

@@ -1,8 +1,9 @@
+import { expect } from 'chai';
 import { describe } from 'mocha';
-import { getCorrectUpdateMiddlePageSum } from './challenge1.js';
+import { getIncorrectUpdateMiddlePageSum } from './challenge2.js';
 
 describe('Day 5 Challenge 1', () => {
-  it('can determine test input', () => {
+  it.only('can determine test input', () => {
     const rules = [
       '47|53',
       '97|13',
@@ -35,6 +36,6 @@ describe('Day 5 Challenge 1', () => {
       '61,13,29',
       '97,13,75,29,47',
     ];
-    getCorrectUpdateMiddlePageSum(rules, updates);
+    expect(getIncorrectUpdateMiddlePageSum(rules, updates)).to.eq(123);
   });
 });
