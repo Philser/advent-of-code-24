@@ -1,12 +1,11 @@
-import fs from 'fs';
-const f = fs.readFileSync(import.meta.dirname + '/input_day5.txt').toString();
-const parts = f.split('\n\n');
-console.log(
-  getIncorrectUpdateMiddlePageSum(
-    parts[0].split('\n'),
-    parts[1].split('\n').slice(0, -1)
-  )
-);
+// const f = fs.readFileSync(import.meta.dirname + '/input_day5.txt').toString();
+// const parts = f.split('\n\n');
+// console.log(
+//   getIncorrectUpdateMiddlePageSum(
+//     parts[0].split('\n'),
+//     parts[1].split('\n').slice(0, -1)
+//   )
+// );
 
 export function getIncorrectUpdateMiddlePageSum(rulesList, updatesList) {
   const rules = extractRules(rulesList);

@@ -2,8 +2,8 @@ import { expect } from 'chai';
 import { describe } from 'mocha';
 import { getIncorrectUpdateMiddlePageSum } from './challenge2.js';
 
-describe('Day 5 Challenge 1', () => {
-  it.only('can determine test input', () => {
+describe('Day 5 Challenge 2', () => {
+  it('can determine test input', () => {
     const rules = [
       '47|53',
       '97|13',
