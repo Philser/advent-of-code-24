@@ -7,9 +7,8 @@ const Directions = {
   Right: '>',
 };
 
-// Ursprüngliche Annahme: Loop ist erkannt wenn Guard wieder an Starting Pos ankommt und Direction gleich ist
-// Aber: Falsch, kann auch später in eine Loop gelockt werden und nie an seine Ausgangspos. zurückkommen
-// Neue Idee: Check für Pos + Direction für jede besuchte Position. Wenn Pos+Dir schon mal vorkamen, dann Loop
+// Try placing an obstacle in every possible position and simulate the guard's path.
+// If the guard ever visits a position it has already visited and their direciton is the same, too, then the obstacle is in a loop.
 export function countAllPossibleObstaclePositions(input) {
   const map = [];
   let startingPos = { x: 0, y: 0 };
