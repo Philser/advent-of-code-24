@@ -15,6 +15,17 @@ describe('Day 6 Challenge 2', () => {
       '#.........\n' +
       '......#...';
 
-    expect(countAllPossibleObstaclePositions(input)).to.eq(4);
+    const result = countAllPossibleObstaclePositions(input);
+    for (const map of result) {
+      printMap(map);
+      console.log('----------------------------------');
+    }
+    expect(result.length).to.eq(6);
   });
 });
+
+function printMap(map) {
+  for (const row of map) {
+    console.log(row.join(''));
+  }
+}

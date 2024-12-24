@@ -1,4 +1,5 @@
 const OBSTACLE_CHAR = '#';
+const ADDITIONAL_OBSTACLE_CHAR = 'O';
 const Directions = {
   Up: '^',
   Down: 'v',
@@ -6,13 +7,13 @@ const Directions = {
   Right: '>',
 };
 
-
 // Ursprüngliche Annahme: Loop ist erkannt wenn Guard wieder an Starting Pos ankommt und Direction gleich ist
 // Aber: Falsch, kann auch später in eine Loop gelockt werden und nie an seine Ausgangspos. zurückkommen
 // Neue Idee: Check für Pos + Direction für jede besuchte Position. Wenn Pos+Dir schon mal vorkamen, dann Loop
 export function countAllPossibleObstaclePositions(input) {
   const map = [];
   let startingPos = { x: 0, y: 0 };
+  const obstacleMaps = [];
 
   let row;
   let rows = input.split('\n');
@@ -30,40 +31,47 @@ export function countAllPossibleObstaclePositions(input) {
     map.push(row);
   }
 
-  let suitableObstalcePositions = new Set();
   let startingDirection = map[startingPos.y][startingPos.x];
-  let oldPos;
   for (let y = 0; y < map.length; y++) {
     columnLoop: for (let x = 0; x < map[0].length; x++) {
       if (x === startingPos.x && y === startingPos.y) {
         continue;
       }
       let alteredMap = structuredClone(map);
-      alteredMap[y][x] = OBSTACLE_CHAR;
+      alteredMap[y][x] = ADDITIONAL_OBSTACLE_CHAR;
 
       let currPos = { x: startingPos.x, y: startingPos.y };
+      let oldPos = { x: startingPos.x, y: startingPos.y };
       let direction = startingDirection;
+      let oldDirection = direction;
+      let visitedPosAndDir = new Set();
+      visitedPosAndDir.add(
+        `${startingPos.x}|${startingPos.y}|${startingDirection}`
+      );
       while (
         currPos.x >= 0 &&
         currPos.y >= 0 &&
         currPos.x < alteredMap[0].length &&
         currPos.y < alteredMap.length
       ) {
-        alteredMap[currPos.y][currPos.x] = direction;
+        setGuardPathCharInMap(
+          alteredMap,
+          currPos,
+          oldPos,
+          direction,
+          oldDirection
+        );
         oldPos = { x: currPos.x, y: currPos.y };
+        oldDirection = direction;
+        visitedPosAndDir.add(`${currPos.x}|${currPos.y}|${direction}`);
         ({ nextPos: currPos, direction } = makeStep(
           currPos,
           alteredMap,
           direction
         ));
-        alteredMap[oldPos.y][oldPos.x] = 'X';
-        if (
-          currPos.x === startingPos.x &&
-          currPos.y === startingPos.y &&
-          direction === startingDirection
-        ) {
+        if (visitedPosAndDir.has(`${currPos.x}|${currPos.y}|${direction}`)) {
           // Detected loop
-          suitableObstalcePositions.add(`${currPos.x}|${currPos.y}`);
+          obstacleMaps.push(alteredMap);
           continue columnLoop;
         }
       }
@@ -71,7 +79,7 @@ export function countAllPossibleObstaclePositions(input) {
     }
   }
 
-  return suitableObstalcePositions.size;
+  return obstacleMaps;
 }
 
 function makeStep(currPos, map, direction, depth) {
@@ -104,7 +112,8 @@ function makeStep(currPos, map, direction, depth) {
   if (
     !(nextPos.x < 0 || nextPos.y < 0) &&
     !(nextPos.x >= map[0].length || nextPos.y >= map.length) &&
-    map[nextPos.y][nextPos.x] === OBSTACLE_CHAR
+    (map[nextPos.y][nextPos.x] === OBSTACLE_CHAR ||
+      map[nextPos.y][nextPos.x] === ADDITIONAL_OBSTACLE_CHAR)
   ) {
     newDirection = getDirectionAfterTurn(direction);
     nextPos = currPos;
@@ -125,5 +134,28 @@ function getDirectionAfterTurn(direction) {
       return Directions.Left;
     default:
       throw Error(`Provided unknown guard direction ${direction}`);
+  }
+}
+
+function setGuardPathCharInMap(map, currPos, oldPos, direction, oldDirection) {
+  map[currPos.y][currPos.x] = direction;
+
+  if (map[oldPos.y][oldPos.x] === '+') {
+    return;
+  }
+
+  if (direction != oldDirection) {
+    map[oldPos.y][oldPos.x] = '+';
+    return;
+  }
+
+  if (direction === Directions.Up || direction === Directions.Down) {
+    map[oldPos.y][oldPos.x] = '|';
+    return;
+  }
+
+  if (direction === Directions.Left || direction === Directions.Right) {
+    map[oldPos.y][oldPos.x] = '-';
+    return;
   }
 }
