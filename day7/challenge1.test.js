@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { calculateTotalCalibrationResult } from './challenge1.js';
 
 describe('Day 7 Challenge 1', () => {
-  it.only('can determine test input solution', () => {
+  it('can determine test input solution', () => {
     let input =
       '190: 10 19\n' +
       '3267: 81 40 27\n' +
@@ -18,9 +18,3 @@ describe('Day 7 Challenge 1', () => {
     expect(result).to.eq(3749);
   });
 });
-
-function printMap(map) {
-  for (const row of map) {
-    console.log(row.join(''));
-  }
-}
