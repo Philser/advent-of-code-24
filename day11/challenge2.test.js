@@ -1,9 +1,9 @@
 import { expect } from 'chai';
-import { countStones } from './challenge1.js';
+import { countStonesEfficiently } from './challenge2.js';
 
-describe('Day 11 Challenge 1', () => {
-  it('solves test input', () => {
-    expect(countStones('0 1 10 99 999', 1)).to.eq(7);
+describe('Day 11 Challenge 2', () => {
+  it.only('solves test input', () => {
+    expect(countStonesEfficiently('0 1 10 99 999', 1)).to.eq(7);
   });
 
   it('solves more complex test input', () => {
