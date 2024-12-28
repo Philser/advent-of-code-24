@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { countStonesEfficiently } from './challenge2.js';
 
 describe('Day 11 Challenge 2', () => {
-  it.only('solves test input', () => {
+  it('solves test input', () => {
     expect(countStonesEfficiently('0 1 10 99 999', 1)).to.eq(7);
   });
 
