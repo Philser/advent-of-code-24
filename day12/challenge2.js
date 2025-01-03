@@ -13,78 +13,72 @@ export function calculateDiscountedPlotCosts(input) {
   for (const plotMap of plotMaps) {
     let area = 0;
     // If we know the amount of vertices, we know the amount of edges
-    let vertices = [];
+    let vertices = new Set();
     for (let y = 0; y < plotMap.length; y++) {
       for (let x = 0; x < plotMap[0].length; x++) {
         let curr = plotMap[y][x];
         if (curr === 1) {
           area += 1;
-          if (
+          const borderAboveAndLeft =
             ((x > 0 && plotMap[y][x - 1] === 0) || x === 0) &&
-            ((y > 0 && plotMap[y - 1][x] === 0) || y === 0)
-          ) {
-            // 1 below a 0 or the border and right to a 0 or the border
-            vertices.add(`${x}|${y}`);
-          }
-          if (
+            ((y > 0 && plotMap[y - 1][x] === 0) || y === 0);
+          const borderAboveAndRight =
             ((x < plotMap[0].length - 1 && plotMap[y][x + 1] === 0) ||
               x === plotMap[0].length - 1) &&
-            ((y > 0 && plotMap[y - 1][x] === 0) || y === 0)
-          ) {
-            // 1 below a 0 or the border and left to a 0 or the border
-            vertices.add(`${x + 1}|${y}`);
-          }
-          if (
+            ((y > 0 && plotMap[y - 1][x] === 0) || y === 0);
+          const borderBelowAndLeft =
             ((x > 0 && plotMap[y][x - 1] === 0) || x === 0) &&
             ((y < plotMap.length - 1 && plotMap[y + 1][x] === 0) ||
-              y === plotMap.length - 1)
-          ) {
-            // 1 above a 0 and right to a 0 or the border
-            vertices.add(`${x}|${y + 1}`);
-          }
-          if (
+              y === plotMap.length - 1);
+          const borderBelowAndRight =
             ((x < plotMap[0].length - 1 && plotMap[y][x + 1] === 0) ||
               x === plotMap[0].length - 1) &&
             ((y < plotMap.length - 1 && plotMap[y + 1][x] === 0) ||
-              y === plotMap.length - 1)
-          ) {
-            // 1 above a 0 and left to a 0 or the border
-            vertices.add(`${x + 1}|${y + 1}`);
+              y === plotMap.length - 1);
+
+          if (borderAboveAndLeft) {
+            addVertexForOne(x, y, plotMap, vertices);
+          }
+          if (borderAboveAndRight) {
+            addVertexForOne(x + 1, y, plotMap, vertices);
+          }
+          if (borderBelowAndLeft) {
+            addVertexForOne(x, y + 1, plotMap, vertices);
+          }
+          if (borderBelowAndRight) {
+            addVertexForOne(x + 1, y + 1, plotMap, vertices);
           }
         } else {
-          if (
+          const borderAboveAndLeft =
             ((x > 0 && plotMap[y][x - 1] === 1) || x === 0) &&
             y > 0 &&
-            plotMap[y - 1][x] === 1
-          ) {
-            // 0 below a 1 and right to a 1 or the border
-            vertices.add(`${x}|${y}`);
-          }
-          if (
+            plotMap[y - 1][x] === 1;
+          const borderAboveAndRight =
             ((x < plotMap[0].length - 1 && plotMap[y][x + 1] === 1) ||
               x === plotMap[0].length - 1) &&
             y > 0 &&
-            plotMap[y - 1][x] === 1
-          ) {
-            // 0 below a 1 and left to a 1 or the border
-            vertices.add(`${x + 1}|${y}`);
-          }
-          if (
+            plotMap[y - 1][x] === 1;
+          const borderBelowAndLeft =
             ((y < plotMap.length - 1 && plotMap[y + 1][x] === 1) ||
               y === plotMap.length - 1) &&
             x > 0 &&
-            plotMap[y][x - 1] === 1
-          ) {
-            // 0 above a 1 and right to a 1 or the border
-            vertices.add(`${x}|${y + 1}`);
-          }
-          if (
+            plotMap[y][x - 1] === 1;
+          const borderBelowAndRight =
             ((y < plotMap.length - 1 && plotMap[y + 1][x] === 1) ||
               y === plotMap.length - 1) &&
             x < plotMap.length - 1 &&
-            plotMap[y][x + 1] === 1
-          ) {
-            // 0 above a 1 and left to a 1 or the border
+            plotMap[y][x + 1] === 1;
+
+          if (borderAboveAndLeft) {
+            vertices.add(`${x}|${y}`);
+          }
+          if (borderAboveAndRight) {
+            vertices.add(`${x + 1}|${y}`);
+          }
+          if (borderBelowAndLeft) {
+            vertices.add(`${x}|${y + 1}`);
+          }
+          if (borderBelowAndRight) {
             vertices.add(`${x + 1}|${y + 1}`);
           }
         }
@@ -162,5 +156,22 @@ function visitPlotPos(map, plant, plot, pos) {
     return;
   } else {
     return;
+  }
+}
+
+function addVertexForOne(x, y, plotMap, verticesSet) {
+  if (verticesSet.has(`${x}|${y}`)) {
+    if (x > 0 && y > 0 && x < plotMap[0].length - 1 && y < plotMap.length - 1) {
+      // not bordering the edge of the map
+      if (
+        (plotMap[y][x] === 1 && plotMap[y - 1][x - 1]) ||
+        (plotMap[y][x - 1] === 1 && plotMap[y - 1][x] === 1)
+      ) {
+        // Found two diagonal 1s, thus we need to add the vertex twice because two areas are sharing a vertex
+        verticesSet.add(`${x}|${y}.2`);
+      }
+    }
+  } else {
+    verticesSet.add(`${x}|${y}`);
   }
 }

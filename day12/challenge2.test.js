@@ -13,7 +13,13 @@ describe.only('Day 12 Challenge 2', () => {
     expect(calculateDiscountedPlotCosts(input)).to.eq(236);
   });
 
-  it.only('can solve new challenge example', () => {
+  it('can solve multiple overlapping vertices', () => {
+    let input = 'ABA\n' + 'BAB';
+
+    expect(calculateDiscountedPlotCosts(input)).to.eq(24);
+  });
+
+  it('can solve new challenge example', () => {
     let input =
       'AAAAAA\n' + 'AAABBA\n' + 'AAABBA\n' + 'ABBAAA\n' + 'ABBAAA\n' + 'AAAAAA';
 
