@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { calculateDiscountedPlotCosts } from './challenge2.js';
 
-describe.only('Day 12 Challenge 2', () => {
+describe('Day 12 Challenge 2', () => {
   it('can solve small test input', () => {
     let input = 'AAAA\n' + 'BBCD\n' + 'BBCC\n' + 'EEEC';
     expect(calculateDiscountedPlotCosts(input)).to.eq(80);
@@ -22,6 +22,13 @@ describe.only('Day 12 Challenge 2', () => {
   it('can solve new challenge example', () => {
     let input =
       'AAAAAA\n' + 'AAABBA\n' + 'AAABBA\n' + 'ABBAAA\n' + 'ABBAAA\n' + 'AAAAAA';
+
+    expect(calculateDiscountedPlotCosts(input)).to.eq(368);
+  });
+
+  it('can solve new challenge example 2', () => {
+    let input =
+      'AAAAAA\n' + 'ABBAAA\n' + 'ABBAAA\n' + 'AAABBA\n' + 'AAABBA\n' + 'AAAAAA';
 
     expect(calculateDiscountedPlotCosts(input)).to.eq(368);
   });

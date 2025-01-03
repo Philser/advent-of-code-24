@@ -1,6 +1,5 @@
 const PARSED = '!';
 
-// this solution doesnt work because we cannot distinguish inner and outer fences (see challenge text)
 export function calculateDiscountedPlotCosts(input) {
   let map = input.split('\n');
   if (map[map.length - 1] === '') {
@@ -12,79 +11,62 @@ export function calculateDiscountedPlotCosts(input) {
   let costs = 0;
   for (const plotMap of plotMaps) {
     let area = 0;
-    // If we know the amount of vertices, we know the amount of edges
-    let vertices = new Set();
+    let topFences = [];
+    let bottomFences = [];
+    let leftFences = [];
+    let rightFences = [];
     for (let y = 0; y < plotMap.length; y++) {
       for (let x = 0; x < plotMap[0].length; x++) {
         let curr = plotMap[y][x];
+        // find plot borders and add perimiter for each one
         if (curr === 1) {
           area += 1;
-          const borderAboveAndLeft =
-            ((x > 0 && plotMap[y][x - 1] === 0) || x === 0) &&
-            ((y > 0 && plotMap[y - 1][x] === 0) || y === 0);
-          const borderAboveAndRight =
-            ((x < plotMap[0].length - 1 && plotMap[y][x + 1] === 0) ||
-              x === plotMap[0].length - 1) &&
-            ((y > 0 && plotMap[y - 1][x] === 0) || y === 0);
-          const borderBelowAndLeft =
-            ((x > 0 && plotMap[y][x - 1] === 0) || x === 0) &&
-            ((y < plotMap.length - 1 && plotMap[y + 1][x] === 0) ||
-              y === plotMap.length - 1);
-          const borderBelowAndRight =
-            ((x < plotMap[0].length - 1 && plotMap[y][x + 1] === 0) ||
-              x === plotMap[0].length - 1) &&
-            ((y < plotMap.length - 1 && plotMap[y + 1][x] === 0) ||
-              y === plotMap.length - 1);
+          if (x === 0) leftFences.push({ x, y });
+          if (x > 0 && plotMap[y][x - 1] === 0) leftFences.push({ x, y });
 
-          if (borderAboveAndLeft) {
-            addVertexForOne(x, y, plotMap, vertices);
-          }
-          if (borderAboveAndRight) {
-            addVertexForOne(x + 1, y, plotMap, vertices);
-          }
-          if (borderBelowAndLeft) {
-            addVertexForOne(x, y + 1, plotMap, vertices);
-          }
-          if (borderBelowAndRight) {
-            addVertexForOne(x + 1, y + 1, plotMap, vertices);
-          }
-        } else {
-          const borderAboveAndLeft =
-            ((x > 0 && plotMap[y][x - 1] === 1) || x === 0) &&
-            y > 0 &&
-            plotMap[y - 1][x] === 1;
-          const borderAboveAndRight =
-            ((x < plotMap[0].length - 1 && plotMap[y][x + 1] === 1) ||
-              x === plotMap[0].length - 1) &&
-            y > 0 &&
-            plotMap[y - 1][x] === 1;
-          const borderBelowAndLeft =
-            ((y < plotMap.length - 1 && plotMap[y + 1][x] === 1) ||
-              y === plotMap.length - 1) &&
-            x > 0 &&
-            plotMap[y][x - 1] === 1;
-          const borderBelowAndRight =
-            ((y < plotMap.length - 1 && plotMap[y + 1][x] === 1) ||
-              y === plotMap.length - 1) &&
-            x < plotMap.length - 1 &&
-            plotMap[y][x + 1] === 1;
+          if (x === plotMap[0].length - 1) rightFences.push({ x, y });
+          if (x + 1 < plotMap[0].length && plotMap[y][x + 1] === 0)
+            rightFences.push({ x, y });
 
-          if (borderAboveAndLeft) {
-            vertices.add(`${x}|${y}`);
-          }
-          if (borderAboveAndRight) {
-            vertices.add(`${x + 1}|${y}`);
-          }
-          if (borderBelowAndLeft) {
-            vertices.add(`${x}|${y + 1}`);
-          }
-          if (borderBelowAndRight) {
-            vertices.add(`${x + 1}|${y + 1}`);
-          }
+          if (y === 0) topFences.push({ x, y });
+          if (y > 0 && plotMap[y - 1][x] === 0) topFences.push({ x, y });
+
+          if (y === plotMap.length - 1) bottomFences.push({ x, y });
+          if (y + 1 < plotMap.length && plotMap[y + 1][x] === 0)
+            bottomFences.push({ x, y });
         }
       }
     }
-    costs += vertices.size * area;
+
+    let sides = 0;
+    function countHorizontalFences(fences) {
+      fences.sort((a, b) => (a.y === b.y ? a.x - b.x : a.y - b.y));
+
+      let sides = 1;
+      let prev = fences[0];
+      for (let i = 1; i < fences.length; i++) {
+        if (fences[i].y !== prev.y || fences[i].x !== prev.x + 1) sides += 1;
+        prev = fences[i];
+      }
+      return sides;
+    }
+    function countVerticalFences(fences) {
+      fences.sort((a, b) => (a.x === b.x ? a.y - b.y : a.x - b.x));
+
+      let sides = 1;
+      let prev = fences[0];
+      for (let i = 1; i < fences.length; i++) {
+        if (fences[i].x !== prev.x || fences[i].y !== prev.y + 1) sides += 1;
+        prev = fences[i];
+      }
+      return sides;
+    }
+    sides += countHorizontalFences(topFences);
+    sides += countHorizontalFences(bottomFences);
+    sides += countVerticalFences(rightFences);
+    sides += countVerticalFences(leftFences);
+
+    costs += area * sides;
   }
 
   return costs;
@@ -156,22 +138,5 @@ function visitPlotPos(map, plant, plot, pos) {
     return;
   } else {
     return;
-  }
-}
-
-function addVertexForOne(x, y, plotMap, verticesSet) {
-  if (verticesSet.has(`${x}|${y}`)) {
-    if (x > 0 && y > 0 && x < plotMap[0].length - 1 && y < plotMap.length - 1) {
-      // not bordering the edge of the map
-      if (
-        (plotMap[y][x] === 1 && plotMap[y - 1][x - 1]) ||
-        (plotMap[y][x - 1] === 1 && plotMap[y - 1][x] === 1)
-      ) {
-        // Found two diagonal 1s, thus we need to add the vertex twice because two areas are sharing a vertex
-        verticesSet.add(`${x}|${y}.2`);
-      }
-    }
-  } else {
-    verticesSet.add(`${x}|${y}`);
   }
 }
