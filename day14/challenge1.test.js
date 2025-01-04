@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { describe } from 'mocha';
 import { determineSafetyFactor } from './challenge1.js';
 
-describe.only('Day 14 Challenge 1', () => {
+describe('Day 14 Challenge 1', () => {
   it('can solve test input', () => {
     let input =
       'p=0,4 v=3,-3\n' +
