@@ -1,3 +1,4 @@
+// Damn this is slow
 export function findStepsToExist(input, memorySpaceDimensions, waitForBytes) {
   let fallingBytesList = parseInput(input);
   let memorySpace = Array.from(new Array(memorySpaceDimensions.y + 1), () =>
@@ -29,7 +30,6 @@ function parseInput(input) {
 }
 
 function findShortestPathToTarget(memorySpace, start, target) {
-  // TODO: Array?
   const graph = {};
   const dist = {};
   const prev = {};
@@ -50,6 +50,7 @@ function findShortestPathToTarget(memorySpace, start, target) {
     prev[vertex.name] = undefined;
     q.add(vertex.name);
   }
+
   let startName = `${start.x}|${start.y}`;
   let targetName = `${target.x}|${target.y}`;
   dist[startName] = 0;
@@ -60,6 +61,7 @@ function findShortestPathToTarget(memorySpace, start, target) {
       if (vName === targetName) {
         break;
       }
+
       if (dist[vName] < shortestDist) {
         shortestDist = dist[vName];
         u = graph[vName];
@@ -82,40 +84,7 @@ function findShortestPathToTarget(memorySpace, start, target) {
     }
   }
 
-  // Debug Code
-  //   let curr = targetName;
-  //   let pathDist = 0;
-  //   while (curr !== startName) {
-  //     pathDist += 1;
-  //     let currV = graph[curr];
-  //     memorySpace[currV.y][currV.x] = 'O';
-  //     curr = prev[curr].name;
-  //   }
-
   return dist[targetName];
-  // create graph from map
-  // vertex:
-  /**
-     * function Dijkstra(Graph, source):
-      
-       for each vertex v in Graph.Vertices:
-           dist[v] ← INFINITY
-           prev[v] ← UNDEFINED
-           add v to Q
-       dist[source] ← 0
-      
-       while Q is not empty:
-          u ← vertex in Q with minimum dist[u]
-          remove u from Q
-         
-          for each neighbor v of u still in Q:
-              alt ← dist[u] + Graph.Edges(u, v)
-              if alt < dist[v]:
-                  dist[v] ← alt
-                  prev[v] ← u
-
-      return dist[], prev[]
-     */
 }
 
 function getNodeNeighbours(nodeCoords, memorySpace) {
