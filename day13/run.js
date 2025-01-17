@@ -3,7 +3,7 @@ import { determineFewestTokensToWinAllPrizes } from './challenge1.js';
 import { determineFewestTokensToWinAllPrizes2 } from './challenge2.js';
 
 const f = fs.readFileSync(import.meta.dirname + '/input.txt');
-console.log('################ Challenge 13 ################');
+console.log('################ Day 13 ################');
 console.log(
   `Challenge 1 solution: ${determineFewestTokensToWinAllPrizes(f.toString())}`
 );
