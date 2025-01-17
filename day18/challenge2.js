@@ -33,24 +33,17 @@ function parseInput(input) {
   });
 }
 
-function visitNeighbours(memorySpace, currVertex, visitedNodes, target) {
-  if (visitedNodes.has(`${currVertex.x}|${currVertex.y}`)) {
+function visitNeighbours(memorySpace, currVertex, visitedVertices, target) {
+  visitedVertices.push(currVertex);
+  if (visitedHasVertex(visitedVertices, target)) {
     return;
   }
 
-  visitedNodes.add(`${currVertex.x}|${currVertex.y}`);
-  if (visitedNodes.has(`${target.x}|${target.y}`)) {
-    return;
-  }
-
-  const neighbours = getNodeNeighbours(
-    { x: currVertex.x, y: currVertex.y },
-    memorySpace
-  );
+  const neighbours = getNodeNeighbours(currVertex, memorySpace);
 
   for (const neighbour of neighbours) {
-    if (!visitedNodes.has(`${neighbour.x}|${neighbour.y}`)) {
-      visitNeighbours(memorySpace, neighbour, visitedNodes, target);
+    if (!visitedHasVertex(visitedVertices, neighbour)) {
+      visitNeighbours(memorySpace, neighbour, visitedVertices, target);
     }
   }
 
@@ -62,9 +55,9 @@ function findFirstPathBlockingByte(memorySpace, target, fallingBytesList) {
     let fallingBytePos = fallingBytesList[i];
     memorySpace[fallingBytePos.y][fallingBytePos.x] = '#';
 
-    const visitedVertices = new Set();
-    visitNeighbours(memorySpace, { x: 0, y: 0 }, visitedVertices, target);
-    if (visitedVertices.has(`${target.x}|${target.y}`)) {
+    const visitedVertices = [];
+    visitNeighbours(memorySpace, [0, 0], visitedVertices, target);
+    if (visitedHasVertex(visitedVertices, target)) {
       continue;
     }
 
@@ -76,19 +69,29 @@ function findFirstPathBlockingByte(memorySpace, target, fallingBytesList) {
 
 function getNodeNeighbours(nodeCoords, memorySpace) {
   const neighbours = [];
-  let { x, y } = nodeCoords;
+  let x = nodeCoords[0];
+  let y = nodeCoords[1];
   if (y !== 0 && memorySpace[y - 1][x] !== '#') {
-    neighbours.push({ x, y: y - 1 });
+    neighbours.push([x, y - 1]);
   }
   if (y !== memorySpace.length - 1 && memorySpace[y + 1][x] !== '#') {
-    neighbours.push({ x, y: y + 1 });
+    neighbours.push([x, y + 1]);
   }
   if (x !== memorySpace[0].length - 1 && memorySpace[y][x + 1] !== '#') {
-    neighbours.push({ x: x + 1, y });
+    neighbours.push([x + 1, y]);
   }
   if (x !== 0 && memorySpace[y][x - 1] !== '#') {
-    neighbours.push({ x: x - 1, y });
+    neighbours.push([x - 1, y]);
   }
 
   return neighbours;
+}
+
+function visitedHasVertex(visited, vertex) {
+  for (const v of visited) {
+    if (v[0] === vertex[0] && v[1] === vertex[1]) {
+      return true;
+    }
+  }
+  return false;
 }
