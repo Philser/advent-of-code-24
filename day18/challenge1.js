@@ -38,7 +38,7 @@ function findShortestPathToTarget(memorySpace, start, target) {
       graph[`${x}|${y}`] = {
         x,
         y,
-        neighbours: getNodeNeighbours({ x, y }, memorySpace),
+        neighbours: getVertexNeighbours({ x, y }, memorySpace),
         name: `${x}|${y}`,
       };
     }
@@ -87,9 +87,9 @@ function findShortestPathToTarget(memorySpace, start, target) {
   return dist[targetName];
 }
 
-function getNodeNeighbours(nodeCoords, memorySpace) {
+function getVertexNeighbours(vCoords, memorySpace) {
   let neighbours = [];
-  let { x, y } = nodeCoords;
+  let { x, y } = vCoords;
   if (y !== 0 && memorySpace[y - 1][x] !== '#') {
     neighbours.push({ x, y: y - 1 });
   }
