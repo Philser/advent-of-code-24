@@ -1,3 +1,5 @@
+import fs from 'fs';
+
 export function findCheapestPath(input) {
   const { map, start, end } = parseInput(input);
 
@@ -20,6 +22,14 @@ export function findCheapestPath(input) {
     }
   }
 
+  let out = '';
+  for (let row = 0; row < map.length; row++) {
+    for (let col = 0; col < map[0].length; col++) {
+      out += '|' + map[row][col] + '|';
+    }
+    out += '\n';
+  }
+  fs.writeFileSync('./output.txt', out);
   return map[end.y][end.x];
 }
 
@@ -72,7 +82,7 @@ function getVertexNeighbours(vCoords, map) {
 function getNeighbourDistanceAndDirection(currVertex, direction, neighbour) {
   let score = 1;
 
-  let newDirection = null;
+  let newDirection = direction;
   if (neighbour.y < currVertex.y) {
     newDirection = '^';
   }
@@ -91,21 +101,4 @@ function getNeighbourDistanceAndDirection(currVertex, direction, neighbour) {
   }
 
   return { dist: score, direction: newDirection };
-}
-
-function visitNeighbours(map, currVertex, visitedVertices, target) {
-  visitedVertices.push(currVertex);
-  if (visitedHasVertex(visitedVertices, target)) {
-    return;
-  }
-
-  const neighbours = getNodeNeighbours(currVertex, map);
-
-  for (const neighbour of neighbours) {
-    if (!visitedHasVertex(visitedVertices, neighbour)) {
-      visitNeighbours(map, neighbour, visitedVertices, target);
-    }
-  }
-
-  return;
 }

@@ -6,6 +6,7 @@ describe('Day 16 Challenge 1', () => {
     let input =
       '###############\n' +
       '#.......#....E#\n' +
+      '#.......#.....#\n' +
       '#.#.###.#.###.#\n' +
       '#.....#.#...#.#\n' +
       '#.###.#####.#.#\n' +
@@ -19,8 +20,9 @@ describe('Day 16 Challenge 1', () => {
       '#.###.#.#.#.#.#\n' +
       '#S..#.....#...#\n' +
       '###############';
-    expect(findCheapestPath(input, { x: 6, y: 6 }, 12)).to.eq(7036);
+    expect(findCheapestPath(input)).to.eq(7036);
   });
+
   it('can solve second example case', () => {
     let input =
       '#################\n' +
